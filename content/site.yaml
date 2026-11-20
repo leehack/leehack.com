@@ -27,7 +27,7 @@ seo:
 
 analytics:
   # GA4 measurement ID, like G-XXXXXXXXXX. Leave empty to ship without analytics or the consent banner.
-  ga_measurement_id: "G-BJX4NZLQ7H"
+  ga_measurement_id: "G-HHREBR2KLK"
 
 sources:
   devto_user: leehack
