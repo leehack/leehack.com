@@ -1,0 +1,155 @@
+# Everything on leehack.com that a person edits lives in this file.
+# Numbers and the post list come from content/live.json, which `dart run tool/refresh.dart` rewrites.
+
+profile:
+  name: Jhin Lee
+  domain: leehack.com
+  # A tag is plain text, or {label, url} to link it.
+  tags:
+    - {label: Flutter & Dart GDE, url: "https://developers.google.com/community/experts"}
+    - {label: Codex Ambassador, url: "https://developers.openai.com/community/codex-ambassadors/directory?ambassador=jhin-lee"}
+    - Senior dev @ Unity
+    - Montréal
+  question: who is Jhin?
+  # Text between *asterisks* is shown in the accent colour.
+  intro: I build open-source tools for using AI from Dart and Flutter. Most of it runs *on the device*, with no cloud involved.
+  footer_note: These answers are pre-written. No model is running here.
+  # One line under the name. {downloads} is the live monthly pub.dev total.
+  facts:
+    - {value: "{downloads}", label: pub.dev downloads a month}
+    - {value: "30", label: talks and workshops since 2023}
+    - {value: "3", label: FlutterCon talks}
+    - {value: "2", label: books translated into Korean}
+
+seo:
+  title: Jhin Lee · Flutter & Dart GDE
+  description: Flutter & Dart GDE in Montréal. Author of mcp_dart and llamadart. Open-source tools that run AI on-device in Dart and Flutter apps.
+
+analytics:
+  # GA4 measurement ID, like G-XXXXXXXXXX. Leave empty to ship without analytics or the consent banner.
+  ga_measurement_id: ""
+
+sources:
+  devto_user: leehack
+  posts_shown: 4
+
+links:
+  github: {label: GitHub, handle: "@leehack", url: "https://github.com/leehack"}
+  linkedin: {label: LinkedIn, handle: in/leehack, url: "https://linkedin.com/in/leehack"}
+  x: {label: X, handle: "@leehack", url: "https://x.com/leehack"}
+  bluesky: {label: Bluesky, handle: leehack.com, url: "https://bsky.app/profile/leehack.com"}
+  blog: {label: Blog, handle: dev.to, url: "https://dev.to/leehack"}
+  talks: {label: Talks, handle: sessionize, url: "https://sessionize.com/leehack"}
+  fluttermtl: {label: Flutter Montréal, handle: organizer, url: "https://fluttermtl.dev/"}
+  gdg: {label: GDG Montréal, handle: organizer, url: "https://gdg.community.dev/gdg-montreal/"}
+  gdev: {label: Google Developer Profile, handle: g.dev, url: "https://g.dev/leehack"}
+  coffee: {label: Buy me a coffee, handle: thanks, url: "https://buymeacoffee.com/leehack"}
+
+# Keys from `links`, shown in the top bar.
+nav: [github, linkedin, x, bluesky]
+
+# One entry per chip. `type` picks the layout: packages | list | posts | links.
+answers:
+  - id: build
+    chip: What do you build?
+    lead: "Three Dart packages take most of my time:"
+    type: packages
+    packages:
+      - name: mcp_dart
+        pub: mcp_dart
+        repo: leehack/mcp_dart
+        url: "https://pub.dev/packages/mcp_dart"
+        blurb: The Model Context Protocol SDK for Dart.
+      - name: llamadart
+        pub: llamadart
+        repo: leehack/llamadart
+        url: "https://llamadart.leehack.com"
+        blurb: On-device LLM inference for Dart & Flutter, on six platforms.
+      - name: dinja
+        pub: dinja
+        repo: leehack/dinja
+        url: "https://pub.dev/packages/dinja"
+        blurb: A Jinja engine for LLM chat templates.
+    extras_label: More
+    extras:
+      - {label: QuAI, url: "https://quai.leehack.com"}
+      - {label: Llama Village, url: "https://github.com/leehack/llama-village"}
+      - {label: Flutter Kart GP, url: "https://github.com/leehack/flutter-kart-gp"}
+      - {label: All my packages on pub.dev, url: "https://pub.dev/publishers/leehack.com/packages"}
+
+  - id: speak
+    chip: Where do you speak?
+    lead: "About 30 talks and workshops since 2023, at meetups, DevFests and FlutterCon. Some that were recorded:"
+    type: list
+    items:
+      - tag: "2026"
+        highlight: true
+        title: "Flight Mode AI: Building Local LLM Apps Easily with LlamaDart"
+        note: FlutterCon USA, Orlando · video
+        url: "https://www.youtube.com/watch?v=aIsxrKkxSFM"
+      - tag: "2026"
+        title: "Flight Mode AI: Shipping Reliable Offline AI with Flutter and Dart"
+        note: DevFest Montréal · slides
+        url: "https://docs.google.com/presentation/d/1wWL6AQOEHZYcNkxcivRN4tCqsx3CoVwbSmnuXKKi-Og/edit?usp=sharing"
+      - tag: "2026"
+        title: "Unlocking On-Device AI with llamadart"
+        note: "Flutter Community AI Circle #19 · video"
+        url: "https://www.youtube.com/watch?v=8RHsCQIFx4M"
+      - tag: "2025"
+        title: "Quick Start MCP with Dart: Building LLM Context Servers Now"
+        note: FlutterCon Europe, Berlin · video
+        url: "https://www.youtube.com/watch?v=RtkmeB6ORIs"
+      - tag: "2025"
+        title: "Empowering Dart & Flutter with the Model Context Protocol"
+        note: FlutterCon USA, New York · video
+        url: "https://www.youtube.com/watch?v=EBgyb6ydrSE"
+      - tag: "2024"
+        title: "Leveraging Go's Power in Your Flutter App"
+        note: Flutter Montréal · video
+        url: "https://www.youtube.com/watch?v=JW9bkDTT94A"
+    extras:
+      - {label: All talks on Sessionize, url: "https://sessionize.com/leehack"}
+      - {label: Flutter Community AI Circle playlist, url: "https://www.youtube.com/playlist?list=PL4dBIh1xps-HIYvaEIbLWHZqt_WGBfpx3"}
+
+  - id: write
+    chip: What are you writing?
+    lead: "I write on dev.to. The latest posts:"
+    type: posts
+    extras_label: Books I helped translate into Korean
+    extras:
+      - label: Efficient Go (lead translator, 2023)
+        url: "https://fliphtml5.com/hkuy/cfbj/Go_%E1%84%89%E1%85%A5%E1%86%BC%E1%84%82%E1%85%B3%E1%86%BC_%E1%84%8E%E1%85%AC%E1%84%8C%E1%85%A5%E1%86%A8%E1%84%92%E1%85%AA_%E1%84%80%E1%85%A1%E1%84%8B%E1%85%B5%E1%84%83%E1%85%B3/"
+      - label: Flutter Engineering (co-translator, 2025)
+        url: "https://www.hanbit.co.kr/books/%ED%94%8C%EB%9F%AC%ED%84%B0-%EC%97%94%EC%A7%80%EB%8B%88%EC%96%B4%EB%A7%81?code=E4329421943"
+
+  - id: community
+    chip: What do you organize?
+    lead: "I help run the Flutter, Google and Codex developer communities in Montréal, and one online:"
+    type: list
+    items:
+      - tag: "2023"
+        title: Flutter Montréal
+        note: Organizer. A meetup most months since January 2023.
+        url: "https://fluttermtl.dev/"
+      - tag: "2023"
+        title: GDG Montréal
+        note: Co-organizer, including DevFest Montréal.
+        url: "https://gdg.community.dev/gdg-montreal/"
+      - tag: "2025"
+        title: Flutter Community AI Circle
+        note: Co-organizer. A livestream about AI in Flutter.
+        url: "https://www.youtube.com/playlist?list=PL4dBIh1xps-HIYvaEIbLWHZqt_WGBfpx3"
+      - tag: "2026"
+        title: Codex Community Montreal
+        note: Organizer, as a Codex Ambassador. Two meetups so far.
+        url: "https://luma.com/codex-montreal"
+
+  - id: links
+    chip: Just the links
+    lead: "All of them:"
+    type: links
+    items: [github, linkedin, x, bluesky, blog, talks, fluttermtl, gdg, gdev, coffee]
+
+# leehack.com/<key> redirects to the URL. Handy for QR codes on slides.
+shortlinks:
+  flight-mode-ai: "https://docs.google.com/presentation/d/1wWL6AQOEHZYcNkxcivRN4tCqsx3CoVwbSmnuXKKi-Og/edit?usp=sharing"
