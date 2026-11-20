@@ -4,7 +4,8 @@ import 'dart:math';
 
 import 'package:web/web.dart' as web;
 
-typedef _Rgb = ({int r, int g, int b});
+import 'theme_colors.dart';
+
 typedef _Figure = ({String attribute, double centerX, double bottom, double height, bool themed});
 
 /// Draws the hero figures as particles: the llama in the theme's colours, Dash in its own.
@@ -59,16 +60,13 @@ class ParticleFigures {
   void retint() {
     if (_particles.isEmpty) return;
 
-    final shade = _themeColor('--ac');
-    final light = _themeColor('--tx');
-    int mix(int from, int to, double amount) => (from + (to - from) * amount).round();
+    final style = web.window.getComputedStyle(_canvas);
+    final shade = themeColor(style, '--ac');
+    final light = themeColor(style, '--tx');
     for (final particle in _particles) {
       final brightness = particle.brightness;
       if (brightness == null) continue;
-      particle.color =
-          'rgba(${mix(shade.r, light.r, brightness)},${mix(shade.g, light.g, brightness)},'
-                  '${mix(shade.b, light.b, brightness)},${(.3 + .7 * brightness).toStringAsFixed(2)})'
-              .toJS;
+      particle.color = mixColors(shade, light, brightness, .3 + .7 * brightness).toJS;
     }
     if (_calm && _context != null) {
       _drawStill();
@@ -177,12 +175,6 @@ class ParticleFigures {
       '2d',
       web.CanvasRenderingContext2DSettings(willReadFrequently: true),
     ) as web.CanvasRenderingContext2D?;
-  }
-
-  _Rgb _themeColor(String property) {
-    final color = web.window.getComputedStyle(_canvas).getPropertyValue(property).trim();
-    final rgb = int.parse(color.substring(1), radix: 16);
-    return (r: rgb >> 16, g: (rgb >> 8) & 0xFF, b: rgb & 0xFF);
   }
 
   void _applyMotionPreference() {

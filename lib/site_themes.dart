@@ -46,6 +46,7 @@ const _siteThemes = {
     line: 'rgba(28,27,24,.18)',
     accent: '#C2410C',
     colorScheme: 'light',
+    shade: .1,
   ),
 };
 
@@ -53,17 +54,13 @@ final themeNames = _siteThemes.keys;
 
 String get defaultSiteThemeCss => _siteThemes.values.first.rule('body');
 
-Component siteThemeStyles() => Component.element(
-  tag: 'style',
-  children: [
-    RawText(
-      [
-        defaultSiteThemeCss,
-        for (final theme in _siteThemes.entries.skip(1)) theme.value.rule('[data-theme="${theme.key}"] body'),
-      ].join('\n'),
-    ),
-  ],
-);
+String get siteThemeCss => [
+  _siteThemes.values.first.rule('body', includeShade: true),
+  for (final theme in _siteThemes.entries.skip(1))
+    theme.value.rule('[data-theme="${theme.key}"] body', includeShade: true),
+].join('\n');
+
+Component siteThemeStyles() => Component.element(tag: 'style', children: [RawText(siteThemeCss)]);
 
 class _Theme {
   const _Theme({
@@ -74,6 +71,7 @@ class _Theme {
     required this.line,
     required this.accent,
     required this.colorScheme,
+    this.shade = .7,
   });
 
   final String background;
@@ -83,8 +81,9 @@ class _Theme {
   final String line;
   final String accent;
   final String colorScheme;
+  final double shade;
 
-  String rule(String selector) =>
+  String rule(String selector, {bool includeShade = false}) =>
       '''
 $selector {
   --bg: $background;
@@ -94,5 +93,5 @@ $selector {
   --line: $line;
   --ac: $accent;
   color-scheme: $colorScheme;
-}''';
+${includeShade ? '  --shade: $shade;\n' : ''}}''';
 }

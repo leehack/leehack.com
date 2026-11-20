@@ -15,6 +15,15 @@ class App extends StatelessComponent {
   Component build(BuildContext context) {
     final profile = site.profile;
     return Component.fragment([
+      const div(
+        classes: 'page-background',
+        attributes: {'aria-hidden': 'true'},
+        [
+          div(classes: 'background-glow', []),
+          div(classes: 'background-grain', []),
+          Component.element(tag: 'canvas', classes: 'background-motes'),
+        ],
+      ),
       div(classes: 'site', [
         header(classes: 'site-header', [
           span(classes: 'meta', [Component.text(profile.domain)]),
