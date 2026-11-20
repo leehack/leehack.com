@@ -20,7 +20,6 @@ typedef PackageEntry = ({String name, String blurb, String url, int downloads});
 typedef ListEntry = ({String tag, String title, String? note, String url, bool highlight});
 typedef Fact = ({String value, String label});
 typedef Post = ({String title, String url, DateTime date});
-typedef PackageStats = ({int downloads, int stars});
 
 class SiteData {
   const SiteData({
@@ -39,16 +38,18 @@ class SiteData {
   final List<SiteLink> nav;
   final List<Answer> answers;
 
-  factory SiteData.load() {
-    final site = loadYaml(_read('content/site.yaml')) as YamlMap;
-    final live = jsonDecode(_read('content/live.json')) as Map<String, dynamic>;
+  factory SiteData.load() => SiteData.parse(_read('content/site.yaml'), _read('content/live.json'));
+
+  factory SiteData.parse(String yaml, String json) {
+    final site = loadYaml(yaml) as YamlMap;
+    final live = jsonDecode(json) as Map<String, dynamic>;
     final profile = site['profile'] as YamlMap;
     final seo = site['seo'] as YamlMap;
     final sources = site['sources'] as YamlMap;
     final measurementId = (site['analytics']['ga_measurement_id'] as String).trim();
 
-    final packageStats = (live['packages'] as Map<String, dynamic>).map<String, PackageStats>(
-      (name, stats) => MapEntry(name, (downloads: stats['downloads30d'] as int, stars: stats['stars'] as int)),
+    final packageDownloads = (live['packages'] as Map<String, dynamic>).map<String, int>(
+      (name, stats) => MapEntry(name, stats['downloads30d'] as int),
     );
     final postCount = sources['posts_shown'] as int;
     final livePosts = live['posts'] as List<dynamic>;
@@ -73,14 +74,14 @@ class SiteData {
 
     PackageEntry packageEntry(YamlMap package, String answerId) {
       final name = package['name'] as String;
-      final stats = packageStats[name];
-      if (stats == null) {
+      final downloads = packageDownloads[name];
+      if (downloads == null) {
         throw FormatException('content/live.json: missing stats for package "$name" in answer "$answerId"');
       }
-      return (name: name, blurb: package['blurb'] as String, url: package['url'] as String, downloads: stats.downloads);
+      return (name: name, blurb: package['blurb'] as String, url: package['url'] as String, downloads: downloads);
     }
 
-    final downloads = packageStats.values.fold(0, (sum, stats) => sum + stats.downloads);
+    final downloads = packageDownloads.values.fold(0, (sum, downloads) => sum + downloads);
 
     final answers = <Answer>[];
     final ids = <String>{};

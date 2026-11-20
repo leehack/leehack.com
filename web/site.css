@@ -1,16 +1,49 @@
+@font-face {
+  font-family: 'Newsreader';
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url('fonts/newsreader-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'Newsreader';
+  font-style: italic;
+  font-weight: 400 500;
+  font-display: swap;
+  src: url('fonts/newsreader-italic-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('fonts/ibm-plex-mono-400-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('fonts/ibm-plex-mono-500-latin.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('fonts/ibm-plex-mono-600-latin.woff2') format('woff2');
+}
+
 * {
   box-sizing: border-box;
 }
 
 body {
   --site-width: 700px;
-  --bg: #0E1220;
-  --tx: #E9EAF2;
-  --so: #C6C9D8;
-  --mu: #8388A2;
-  --line: rgba(233,234,242,.14);
-  --ac: #FFD166;
-  color-scheme: dark;
   --mono: 'IBM Plex Mono',ui-monospace,monospace;
   margin: 0;
   min-height: 100vh;
@@ -19,43 +52,6 @@ body {
   font-family: 'Newsreader',Georgia,serif;
   font-size: 18px;
   line-height: 1.5;
-}
-
-[data-theme="amber"] body {
-  --bg: #121211;
-  --tx: #E9E5DB;
-  --so: #CFCABD;
-  --mu: #8C877B;
-  --line: rgba(233,229,219,.14);
-  --ac: #F0A23B;
-}
-
-[data-theme="sky"] body {
-  --bg: #0F1418;
-  --tx: #E6ECF0;
-  --so: #C3CDD4;
-  --mu: #7E8B95;
-  --line: rgba(230,236,240,.14);
-  --ac: #5CC8F8;
-}
-
-[data-theme="coral"] body {
-  --bg: #151211;
-  --tx: #EFE7E1;
-  --so: #D3C8C0;
-  --mu: #92877F;
-  --line: rgba(239,231,225,.14);
-  --ac: #FF6F59;
-}
-
-[data-theme="paper"] body {
-  --bg: #F4F0E6;
-  --tx: #1C1B18;
-  --so: #3A3832;
-  --mu: #7A7468;
-  --line: rgba(28,27,24,.18);
-  --ac: #C2410C;
-  color-scheme: light;
 }
 
 ::selection {
@@ -80,24 +76,24 @@ a {
   padding: 24px clamp(20px,6vw,40px) 28px;
 }
 
-.k {
+.meta {
   font-family: var(--mono);
   font-size: 12.5px;
   color: var(--mu);
 }
 
-.ac {
+.emphasis {
   font-style: italic;
 }
 
-.top {
+.site-header {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
   gap: 12px;
 }
 
-.top nav {
+.site-header nav {
   display: flex;
   gap: 18px;
 }
@@ -125,7 +121,7 @@ a {
   text-decoration-color: var(--ac);
 }
 
-.u:hover {
+.nav-link:hover {
   color: var(--tx);
   text-decoration: underline;
   text-underline-offset: 3px;
@@ -178,26 +174,26 @@ h1 {
   padding-top: 34px;
 }
 
-.q span {
+.intro-question span {
   font-family: var(--mono);
   font-size: 13.5px;
   color: var(--ac);
 }
 
-.q span::before {
+.intro-question span::before {
   content: "> ";
 }
 
-.js .q {
+.js .intro-question {
   opacity: 0;
   transition: opacity .3s;
 }
 
-.js .q.in {
+.js .intro-question.is-visible {
   opacity: 1;
 }
 
-.say {
+.intro {
   font-size: clamp(22px,3.9vw,28px);
   line-height: 1.32;
   margin: 10px 0 0;
@@ -205,21 +201,21 @@ h1 {
   min-height: 3.96em;
 }
 
-.js .t {
+.js .stream-word {
   opacity: 0;
 }
 
-.js .t.on {
+.js .stream-word.is-visible {
   opacity: 1;
 }
 
-.cur {
+.stream-cursor {
   display: inline-block;
   width: 0;
   position: relative;
 }
 
-.cur::after {
+.stream-cursor::after {
   content: "";
   position: absolute;
   left: 4px;
@@ -236,7 +232,7 @@ h1 {
   }
 }
 
-.ask {
+.answer-chips {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
@@ -246,18 +242,18 @@ h1 {
   border-top: 1px solid var(--line);
 }
 
-.js .ask {
+.js .answer-chips {
   visibility: hidden;
   opacity: 0;
   transition: opacity .3s;
 }
 
-.js .ask.in {
+.js .answer-chips.is-visible {
   visibility: visible;
   opacity: 1;
 }
 
-.ask>span {
+.answer-chips>span {
   font-family: var(--mono);
   font-size: 13.5px;
   color: var(--ac);
@@ -285,23 +281,23 @@ h1 {
   border-bottom: 1px solid var(--ac);
 }
 
-.ans {
+.answers {
   margin-top: 26px;
 }
 
-.js .ans {
+.js .answers {
   min-height: 330px;
 }
 
-.js .ans section:not(.on) {
+.js .answers section:not(.is-visible) {
   display: none;
 }
 
-html:not(.js) .ans section + section {
+html:not(.js) .answers section + section {
   margin-top: 30px;
 }
 
-html:not(.js) .ask button,html:not(.js) #theme,.js .fallback-chip {
+html:not(.js) .answer-chips button,html:not(.js) #theme,.js .fallback-chip {
   display: none;
 }
 
@@ -313,18 +309,18 @@ html:not(.js) .ask button,html:not(.js) #theme,.js .fallback-chip {
   max-width: 30em;
 }
 
-.js .it {
+.js .stream-item {
   visibility: hidden;
   opacity: 0;
   transition: opacity .25s;
 }
 
-.js .it.on {
+.js .stream-item.is-visible {
   visibility: visible;
   opacity: 1;
 }
 
-.row {
+.package-row {
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 2px 20px;
@@ -333,37 +329,37 @@ html:not(.js) .ask button,html:not(.js) #theme,.js .fallback-chip {
   border-bottom: 1px solid var(--line);
 }
 
-.row h2 {
+.package-row h2 {
   font: 600 19px var(--mono);
   margin: 0;
 }
 
-.row:hover h2 {
+.package-row:hover h2 {
   color: var(--ac);
   text-decoration: underline;
   text-underline-offset: 4px;
 }
 
-.row p {
+.package-row p {
   margin: 4px 0 0;
   font-size: 17px;
   color: var(--mu);
 }
 
-.row .n {
+.package-row .download-count {
   font-family: var(--mono);
   font-size: 12.5px;
   color: var(--mu);
   white-space: nowrap;
 }
 
-.row .n b {
+.package-row .download-count b {
   font-weight: 500;
   color: var(--so);
   margin-right: .5em;
 }
 
-.fun {
+.extra-links {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
@@ -373,19 +369,19 @@ html:not(.js) .ask button,html:not(.js) #theme,.js .fallback-chip {
   font-size: 13px;
 }
 
-.fun a {
+.extra-links a {
   color: var(--so);
   text-decoration: underline;
   text-decoration-color: var(--mu);
   text-underline-offset: 3px;
 }
 
-.fun a:hover {
+.extra-links a:hover {
   color: var(--ac);
   text-decoration-color: var(--ac);
 }
 
-.li {
+.list-row {
   display: grid;
   grid-template-columns: 46px 1fr;
   gap: 14px;
@@ -396,15 +392,15 @@ html:not(.js) .ask button,html:not(.js) #theme,.js .fallback-chip {
   line-height: 1.3;
 }
 
-.li:hover,.lk:hover {
+.list-row:hover,.link-row:hover {
   color: var(--ac);
 }
 
-.li .tg {
+.list-row .highlight {
   color: var(--ac);
 }
 
-.li small {
+.list-row small {
   display: block;
   margin-top: 3px;
   font-family: var(--mono);
@@ -412,13 +408,13 @@ html:not(.js) .ask button,html:not(.js) #theme,.js .fallback-chip {
   color: var(--mu);
 }
 
-.all {
+.link-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0 32px;
 }
 
-.lk {
+.link-row {
   display: flex;
   align-items: baseline;
   gap: 8px;
@@ -427,14 +423,14 @@ html:not(.js) .ask button,html:not(.js) #theme,.js .fallback-chip {
   font-size: 18.5px;
 }
 
-.lk span {
+.link-row span {
   font-family: var(--mono);
   font-size: 12.5px;
   color: var(--mu);
   margin-left: auto;
 }
 
-.end {
+.site-footer {
   display: flex;
   justify-content: space-between;
   gap: 6px 16px;
@@ -445,7 +441,7 @@ html:not(.js) .ask button,html:not(.js) #theme,.js .fallback-chip {
 }
 
 @media (max-width:520px) {
-  .top nav {
+  .site-header nav {
     gap: 12px;
   }
   .hero {
@@ -462,24 +458,15 @@ html:not(.js) .ask button,html:not(.js) #theme,.js .fallback-chip {
   .facts span {
     margin-right: 18px;
   }
-  .row {
+  .package-row {
     grid-template-columns: 1fr;
   }
-  .li {
+  .list-row {
     grid-template-columns: 1fr;
     gap: 2px;
   }
-  .all {
+  .link-grid {
     grid-template-columns: 1fr;
-  }
-}
-
-@media (prefers-reduced-motion:no-preference) {
-  .js:not(.js-ready) .initial .final {
-    display: none;
-  }
-  .js:not(.js-ready) .initial::before {
-    content: attr(data-initial);
   }
 }
 
@@ -506,10 +493,10 @@ html:not(.js) .ask button,html:not(.js) #theme,.js .fallback-chip {
 }
 
 @media (prefers-reduced-motion:reduce) {
-  .cur::after {
+  .stream-cursor::after {
     animation: none;
   }
-  .js .t,.js .it,.js .q,.js .ask {
+  .js .stream-word,.js .stream-item,.js .intro-question,.js .answer-chips {
     visibility: visible;
     opacity: 1;
     transition: none;

@@ -25,10 +25,10 @@ jobs:
         with:
           sdk: '3.14'
       - run: dart pub get
+      - run: dart analyze
+      - run: dart test
       - name: Refresh live data
         run: dart run tool/refresh.dart
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
       - uses: actions/configure-pages@v6
         id: pages
       - name: Build site

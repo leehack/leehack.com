@@ -6,12 +6,18 @@ import 'package:yaml/yaml.dart';
 const _timeout = Duration(seconds: 15);
 const _pageSize = 100;
 const _postsToKeep = 6;
-typedef _Posts = ({int count, List<Map<String, Object?>> posts});
 
 Future<void> main() async {
   final client = HttpClient()..connectionTimeout = _timeout;
   try {
-    await _refresh(client);
+    final snapshot = File('content/live.json');
+    await refreshLiveData(
+      siteFile: File('content/site.yaml'),
+      snapshot: snapshot,
+      fetchJson: (url) => _getJson(client, url),
+      warn: stderr.writeln,
+    );
+    stdout.writeln('Refreshed ${snapshot.path}.');
   } catch (error) {
     stderr.writeln('Error refreshing live data: $error');
     exitCode = 1;
@@ -20,49 +26,47 @@ Future<void> main() async {
   }
 }
 
-Future<void> _refresh(HttpClient client) async {
-  final site = loadYaml(File('content/site.yaml').readAsStringSync()) as YamlMap;
+Future<void> refreshLiveData({
+  required File siteFile,
+  required File snapshot,
+  required Future<Object?> Function(Uri url) fetchJson,
+  required void Function(String message) warn,
+}) async {
+  final site = loadYaml(siteFile.readAsStringSync()) as YamlMap;
   final sources = site['sources'] as YamlMap;
   final postsShown = sources['posts_shown'] as int;
   if (postsShown < 0 || postsShown > _postsToKeep) {
     throw const FormatException('sources.posts_shown must be between 0 and $_postsToKeep.');
   }
 
-  final snapshot = File('content/live.json');
-  final previous = _readSnapshot(snapshot);
+  final previous = _readSnapshot(snapshot, warn);
   final previousPackages = previous['packages'];
   final missing = <String>[];
   final packages = <String, Object?>{};
-  final token = Platform.environment['GITHUB_TOKEN'];
 
   for (final answer in site['answers'] as YamlList) {
     if (answer['type'] != 'packages') continue;
     for (final package in answer['packages'] as YamlList) {
       final name = package['name'] as String;
       final pub = package['pub'] as String;
-      final repo = package['repo'] as String;
       final saved = previousPackages is Map ? previousPackages[name] : null;
       final downloads = await _withFallback(
         '$name.downloads30d',
-        () => _fetchCount(client, Uri.https('pub.dev', '/api/packages/$pub/score'), 'downloadCount30Days'),
+        () => _fetchDownloads(fetchJson, pub),
         _count(saved is Map ? saved['downloads30d'] : null),
         missing,
+        warn,
       );
-      final stars = await _withFallback(
-        '$name.stars',
-        () => _fetchCount(client, Uri.https('api.github.com', '/repos/$repo'), 'stargazers_count', token: token),
-        _count(saved is Map ? saved['stars'] : null),
-        missing,
-      );
-      packages[name] = {'downloads30d': downloads, 'stars': stars};
+      packages[name] = {'downloads30d': downloads};
     }
   }
 
   final posts = await _withFallback(
-    'postCount and posts',
-    () => _fetchPosts(client, sources['devto_user'] as String, postsShown),
+    'posts',
+    () => _fetchPosts(fetchJson, sources['devto_user'] as String, postsShown),
     _savedPosts(previous, postsShown),
     missing,
+    warn,
   );
   if (missing.isNotEmpty) {
     throw FormatException('No previous value for ${missing.join(', ')}. ${snapshot.path} was left untouched.');
@@ -71,8 +75,7 @@ Future<void> _refresh(HttpClient client) async {
   final data = {
     'generatedAt': '${DateTime.now().toUtc().toIso8601String().split('.').first}Z',
     'packages': packages,
-    'postCount': posts!.count,
-    'posts': posts.posts,
+    'posts': posts!,
   };
   final temporary = snapshot.parent.createTempSync('.live-');
   try {
@@ -82,27 +85,32 @@ Future<void> _refresh(HttpClient client) async {
   } finally {
     temporary.deleteSync(recursive: true);
   }
-  stdout.writeln('Refreshed ${snapshot.path}.');
 }
 
-Map<String, Object?> _readSnapshot(File snapshot) {
+Map<String, Object?> _readSnapshot(File snapshot, void Function(String) warn) {
   if (!snapshot.existsSync()) return {};
   try {
     final data = jsonDecode(snapshot.readAsStringSync());
     if (data is Map<String, Object?>) return data;
     throw const FormatException('Expected a JSON object.');
   } on FormatException catch (error) {
-    stderr.writeln('Warning: Could not read ${snapshot.path}: $error');
+    warn('Warning: Could not read ${snapshot.path}: $error');
     return {};
   }
 }
 
-Future<T?> _withFallback<T>(String field, Future<T> Function() fetch, T? previous, List<String> missing) async {
+Future<T?> _withFallback<T>(
+  String field,
+  Future<T> Function() fetch,
+  T? previous,
+  List<String> missing,
+  void Function(String) warn,
+) async {
   try {
     return await fetch();
   } catch (error) {
     final status = previous == null ? 'No previous value.' : 'Keeping the previous value.';
-    stderr.writeln('Warning: Could not refresh $field: $error. $status');
+    warn('Warning: Could not refresh $field: $error. $status');
     if (previous == null) missing.add(field);
     return previous;
   }
@@ -110,14 +118,20 @@ Future<T?> _withFallback<T>(String field, Future<T> Function() fetch, T? previou
 
 int? _count(Object? value) => value is int && value >= 0 ? value : null;
 
-Future<int> _fetchCount(HttpClient client, Uri url, String field, {String? token}) async {
-  final data = await _getJson(client, url, token: token);
+Future<int> _fetchDownloads(Future<Object?> Function(Uri) fetchJson, String pub) async {
+  final url = Uri.https('pub.dev', '/api/packages/$pub/score');
+  final data = await fetchJson(url);
+  const field = 'downloadCount30Days';
   final count = data is Map ? _count(data[field]) : null;
   if (count == null) throw FormatException('Expected a non-negative integer for $field from $url');
   return count;
 }
 
-Future<_Posts> _fetchPosts(HttpClient client, String user, int postsShown) async {
+Future<List<Map<String, Object?>>> _fetchPosts(
+  Future<Object?> Function(Uri) fetchJson,
+  String user,
+  int postsShown,
+) async {
   final articles = <({DateTime publishedAt, Map<String, Object?> post})>[];
   final urls = <String>{};
   for (var page = 1; ; page++) {
@@ -126,7 +140,7 @@ Future<_Posts> _fetchPosts(HttpClient client, String user, int postsShown) async
       'per_page': '$_pageSize',
       'page': '$page',
     });
-    final data = await _getJson(client, url);
+    final data = await fetchJson(url);
     if (data is! List || data.length > _pageSize) throw FormatException('Expected a page of articles from $url');
     for (final article in data) {
       final timestamp = article is Map ? article['published_at'] : null;
@@ -144,20 +158,19 @@ Future<_Posts> _fetchPosts(HttpClient client, String user, int postsShown) async
   }
   if (articles.length < postsShown) throw FormatException('Expected at least $postsShown posts from dev.to');
   articles.sort((a, b) => b.publishedAt.compareTo(a.publishedAt));
-  return (count: articles.length, posts: articles.take(_postsToKeep).map((entry) => entry.post).toList());
+  return articles.take(_postsToKeep).map((entry) => entry.post).toList();
 }
 
-_Posts? _savedPosts(Map<String, Object?> previous, int postsShown) {
-  final count = _count(previous['postCount']);
+List<Map<String, Object?>>? _savedPosts(Map<String, Object?> previous, int postsShown) {
   final entries = previous['posts'];
-  if (count == null || entries is! List || entries.length < postsShown || entries.length > count) return null;
+  if (entries is! List || entries.length < postsShown) return null;
   final posts = <Map<String, Object?>>[];
   for (final entry in entries.take(_postsToKeep)) {
     final post = _post(entry, entry is Map ? entry['date'] : null);
     if (post == null) return null;
     posts.add(post);
   }
-  return (count: count, posts: posts);
+  return posts;
 }
 
 Map<String, Object?>? _post(Object? entry, Object? date) {
@@ -178,12 +191,9 @@ Map<String, Object?>? _post(Object? entry, Object? date) {
   return {'title': title, 'url': url, 'date': date};
 }
 
-Future<Object?> _getJson(HttpClient client, Uri url, {String? token}) async {
+Future<Object?> _getJson(HttpClient client, Uri url) async {
   final request = await client.getUrl(url).timeout(_timeout);
   request.headers.set(HttpHeaders.userAgentHeader, 'leehack-site-refresh');
-  if (token != null && token.isNotEmpty) {
-    request.headers.set(HttpHeaders.authorizationHeader, 'Bearer $token');
-  }
   final response = await request.close().timeout(_timeout);
   if (response.statusCode != HttpStatus.ok) {
     await response.drain<void>().timeout(_timeout);

@@ -57,17 +57,14 @@ answers:
     packages:
       - name: mcp_dart
         pub: mcp_dart
-        repo: leehack/mcp_dart
         url: "https://pub.dev/packages/mcp_dart"
         blurb: The Model Context Protocol SDK for Dart.
       - name: llamadart
         pub: llamadart
-        repo: leehack/llamadart
         url: "https://llamadart.leehack.com"
         blurb: On-device LLM inference for Dart & Flutter, on six platforms.
       - name: dinja
         pub: dinja
-        repo: leehack/dinja
         url: "https://pub.dev/packages/dinja"
         blurb: A Jinja engine for LLM chat templates.
     extras_label: More

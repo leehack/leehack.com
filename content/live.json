@@ -1,20 +1,16 @@
 {
-  "generatedAt": "2026-11-20T19:03:46Z",
+  "generatedAt": "2026-11-20T19:42:37Z",
   "packages": {
     "mcp_dart": {
-      "downloads30d": 443323,
-      "stars": 116
+      "downloads30d": 443323
     },
     "llamadart": {
-      "downloads30d": 80786,
-      "stars": 92
+      "downloads30d": 80786
     },
     "dinja": {
-      "downloads30d": 83582,
-      "stars": 2
+      "downloads30d": 83582
     }
   },
-  "postCount": 20,
   "posts": [
     {
       "title": "Building a cross-platform Flutter festival assistant with llamadart",

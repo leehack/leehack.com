@@ -7,12 +7,9 @@ import 'package:jaspr/server.dart';
 import 'app.dart';
 import 'main.server.options.dart';
 import 'site_data.dart';
+import 'site_themes.dart';
 
 const _canonical = 'https://leehack.com/';
-const _fonts =
-    'https://fonts.googleapis.com/css2?'
-    'family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500'
-    '&family=IBM+Plex+Mono:wght@400;500;600&display=swap';
 
 void main() {
   final site = SiteData.load();
@@ -34,10 +31,8 @@ void main() {
         meta(attributes: {'property': 'og:description', 'content': site.seo.description}),
         const meta(attributes: {'property': 'og:url', 'content': _canonical}),
         const meta(attributes: {'property': 'og:type', 'content': 'website'}),
-        const link(href: 'https://fonts.googleapis.com', rel: 'preconnect'),
-        const link(href: 'https://fonts.gstatic.com', rel: 'preconnect', attributes: {'crossorigin': 'anonymous'}),
-        const link(href: _fonts, rel: 'stylesheet'),
         const link(href: 'images/llama.svg', rel: 'icon', type: 'image/svg+xml'),
+        siteThemeStyles(),
         const link(href: 'site.css', rel: 'stylesheet'),
         if (site.measurementId.isNotEmpty) ...[
           script(content: _analyticsSnippet(site.measurementId)),

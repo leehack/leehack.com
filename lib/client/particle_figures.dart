@@ -16,6 +16,7 @@ class ParticleFigures {
   static const _sampleStep = 3;
   static const _scratchSize = 256;
   static const _repelDistanceSquared = 2600;
+  static const _idleMilliseconds = 4000;
   static const _figures = <_Figure>[
     (attribute: 'data-image', centerX: 96, bottom: 200, height: 176, themed: true),
     (attribute: 'data-companion', centerX: 236, bottom: 200, height: 104, themed: false),
@@ -29,14 +30,24 @@ class ParticleFigures {
   web.CanvasRenderingContext2D? _context;
   web.IntersectionObserver? _observer;
   int? _frameId;
+  double? _idleSince;
   double _energy = 0;
   bool _visible = false;
   bool _disposed = false;
-  ({num x, num y})? pointer;
+  ({double x, double y})? _pointer;
 
   void mount() => unawaited(_loadParticles());
 
-  void pulse() => _energy = 1;
+  void pulse() {
+    _energy = 1;
+    _wake();
+  }
+
+  set pointer(({double x, double y})? value) {
+    if (value == null && _pointer == null) return;
+    _pointer = value;
+    _wake();
+  }
 
   set calm(bool value) {
     if (_calm == value) return;
@@ -46,8 +57,10 @@ class ParticleFigures {
 
   /// Re-reads the theme colours, for when the theme changes after load.
   void retint() {
-    final shade = _themeColor('--ac', (r: 255, g: 209, b: 102));
-    final light = _themeColor('--tx', (r: 233, g: 234, b: 242));
+    if (_particles.isEmpty) return;
+
+    final shade = _themeColor('--ac');
+    final light = _themeColor('--tx');
     int mix(int from, int to, double amount) => (from + (to - from) * amount).round();
     for (final particle in _particles) {
       final brightness = particle.brightness;
@@ -57,7 +70,11 @@ class ParticleFigures {
                   '${mix(shade.b, light.b, brightness)},${(.3 + .7 * brightness).toStringAsFixed(2)})'
               .toJS;
     }
-    if (_calm && _context != null) _drawStill();
+    if (_calm && _context != null) {
+      _drawStill();
+    } else {
+      _wake();
+    }
   }
 
   Future<void> _loadParticles() async {
@@ -162,11 +179,9 @@ class ParticleFigures {
     ) as web.CanvasRenderingContext2D?;
   }
 
-  _Rgb _themeColor(String property, _Rgb fallback) {
-    final value = web.window.getComputedStyle(_canvas).getPropertyValue(property).trim();
-    final hex = RegExp(r'^#([0-9a-fA-F]{6})$').firstMatch(value)?[1];
-    if (hex == null) return fallback;
-    final rgb = int.parse(hex, radix: 16);
+  _Rgb _themeColor(String property) {
+    final color = web.window.getComputedStyle(_canvas).getPropertyValue(property).trim();
+    final rgb = int.parse(color.substring(1), radix: 16);
     return (r: rgb >> 16, g: (rgb >> 8) & 0xFF, b: rgb & 0xFF);
   }
 
@@ -176,7 +191,7 @@ class ParticleFigures {
       _observer?.disconnect();
       _observer = null;
       _visible = false;
-      pointer = null;
+      _pointer = null;
       _energy = 0;
       _drawStill();
       return;
@@ -187,7 +202,7 @@ class ParticleFigures {
         if (_calm || _disposed) return;
         _visible = entries.toDart.last.isIntersecting;
         if (_visible) {
-          _frameId ??= web.window.requestAnimationFrame(_drawFrame);
+          _wake();
         } else {
           _cancelFrame();
         }
@@ -212,13 +227,18 @@ class ParticleFigures {
     if (!_visible || _disposed) return;
 
     final drawing = _context!;
-    final bounds = _canvas.getBoundingClientRect();
-    final cursor = pointer;
-    final pointerX = cursor == null ? -999 : (cursor.x - bounds.left) * _width / bounds.width;
-    final pointerY = cursor == null ? -999 : (cursor.y - bounds.top) * _height / bounds.height;
+    var pointerX = -999.0, pointerY = -999.0;
+    if (_pointer case final pointer?) {
+      final bounds = _canvas.getBoundingClientRect();
+      pointerX = (pointer.x - bounds.left) * _width / bounds.width;
+      pointerY = (pointer.y - bounds.top) * _height / bounds.height;
+    }
     drawing.clearRect(0, 0, _width, _height);
     _energy *= .965;
     final drift = 1.1 + _energy * 3.2;
+    final idleSince = _idleSince ??= time;
+    var settled = time - idleSince >= _idleMilliseconds && _energy < .03;
+    var pointerNearby = false;
 
     for (final particle in _particles) {
       final goalX = particle.homeX + sin(time / 900 + particle.phase) * drift;
@@ -226,20 +246,38 @@ class ParticleFigures {
       final dx = particle.x - pointerX;
       final dy = particle.y - pointerY;
       final distanceSquared = dx * dx + dy * dy;
-      if (distanceSquared < _repelDistanceSquared && distanceSquared > 0) {
-        final force = (_repelDistanceSquared - distanceSquared) / _repelDistanceSquared * 2.4 / sqrt(distanceSquared);
-        particle.vx += dx * force;
-        particle.vy += dy * force;
+      if (distanceSquared < _repelDistanceSquared) {
+        pointerNearby = true;
+        if (distanceSquared > 0) {
+          final force = (_repelDistanceSquared - distanceSquared) / _repelDistanceSquared * 2.4 / sqrt(distanceSquared);
+          particle.vx += dx * force;
+          particle.vy += dy * force;
+        }
       }
       particle.vx = (particle.vx + (goalX - particle.x) * .055) * .84;
       particle.vy = (particle.vy + (goalY - particle.y) * .055) * .84;
       particle.x += particle.vx;
       particle.y += particle.vy;
+      if (settled && ((particle.x - goalX).abs() > 1 || (particle.y - goalY).abs() > 1)) {
+        settled = false;
+      }
       drawing.fillStyle = particle.color;
       drawing.fillRect(particle.x, particle.y, 1.7, 1.7);
     }
 
-    _frameId = web.window.requestAnimationFrame(_drawFrame);
+    if (pointerNearby) _idleSince = null;
+    if (pointerNearby || !settled) _scheduleFrame();
+  }
+
+  void _wake() {
+    _idleSince = null;
+    _scheduleFrame();
+  }
+
+  void _scheduleFrame() {
+    if (_visible && !_calm && !_disposed) {
+      _frameId ??= web.window.requestAnimationFrame(_drawFrame);
+    }
   }
 
   void _cancelFrame() {
