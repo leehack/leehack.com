@@ -8,6 +8,7 @@ import 'particle_figures.dart';
 import 'theme_switch.dart';
 
 void Function() mountSiteInteractions() {
+  web.document.documentElement?.setAttribute('data-live', '');
   final listeners = EventListeners();
   final motion = web.window.matchMedia('(prefers-reduced-motion: reduce)');
   bool reducedMotion() => motion.matches;

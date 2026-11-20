@@ -10,6 +10,7 @@ import 'site_data.dart';
 import 'site_themes.dart';
 
 const _canonical = 'https://leehack.com/';
+const _previewImage = '${_canonical}images/og.png';
 
 void main() {
   final site = SiteData.load();
@@ -19,11 +20,19 @@ void main() {
       lang: 'en',
       base: Platform.environment['SITE_BASE'] ?? '/',
       title: site.seo.title,
-      meta: {'description': site.seo.description, 'twitter:card': 'summary'},
+      meta: {
+        'description': site.seo.description,
+        'twitter:card': 'summary_large_image',
+        'twitter:image': _previewImage,
+      },
       head: [
         const script(
           content:
               "document.documentElement.classList.add('js');"
+              // The js class hides the answers until the client script reveals them, so it is
+              // dropped again when that script never starts.
+              "setTimeout(function(){var e=document.documentElement;"
+              "if(!e.hasAttribute('data-live'))e.classList.remove('js')},4000);"
               "try{var t=localStorage.getItem('leehack-theme');if(t)document.documentElement.dataset.theme=t}catch(_){}",
         ),
         const link(href: _canonical, rel: 'canonical'),
@@ -31,7 +40,21 @@ void main() {
         meta(attributes: {'property': 'og:description', 'content': site.seo.description}),
         const meta(attributes: {'property': 'og:url', 'content': _canonical}),
         const meta(attributes: {'property': 'og:type', 'content': 'website'}),
+        const meta(attributes: {'property': 'og:image', 'content': _previewImage}),
+        const meta(attributes: {'property': 'og:image:width', 'content': '1200'}),
+        const meta(attributes: {'property': 'og:image:height', 'content': '630'}),
+        meta(attributes: {'property': 'og:image:alt', 'content': site.seo.title}),
+        const link(href: 'images/apple-touch-icon.png', rel: 'apple-touch-icon'),
+        const link(href: 'images/favicon-32.png', rel: 'icon', type: 'image/png', attributes: {'sizes': '32x32'}),
         const link(href: 'images/llama.svg', rel: 'icon', type: 'image/svg+xml'),
+        for (final font in const ['newsreader-latin.woff2', 'ibm-plex-mono-400-latin.woff2'])
+          link(
+            href: 'fonts/$font',
+            rel: 'preload',
+            as: 'font',
+            type: 'font/woff2',
+            attributes: const {'crossorigin': ''},
+          ),
         siteThemeStyles(),
         const link(href: 'site.css', rel: 'stylesheet'),
         if (site.measurementId.isNotEmpty) ...[

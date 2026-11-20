@@ -51,12 +51,14 @@ const _siteThemes = {
 
 final themeNames = _siteThemes.keys;
 
+String get defaultSiteThemeCss => _siteThemes.values.first.rule('body');
+
 Component siteThemeStyles() => Component.element(
   tag: 'style',
   children: [
     RawText(
       [
-        _siteThemes.values.first.rule('body'),
+        defaultSiteThemeCss,
         for (final theme in _siteThemes.entries.skip(1)) theme.value.rule('[data-theme="${theme.key}"] body'),
       ].join('\n'),
     ),

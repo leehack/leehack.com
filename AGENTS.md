@@ -48,4 +48,4 @@ The site reads the base path from the `SITE_BASE` environment variable at build 
 - No email address anywhere on the site.
 - No career history or CV content.
 - All motion must switch off under `prefers-reduced-motion`.
-- With JavaScript disabled, every answer and link must still be readable.
+- With JavaScript disabled, or when the client script fails to load, every answer and link must still be readable.

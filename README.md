@@ -26,9 +26,10 @@ dart test
 dart run tool/refresh.dart
 dart run jaspr_cli:jaspr build
 dart run tool/shortlinks.dart
+dart run tool/not_found.dart
 ```
 
-The dev server is available at `http://localhost:8080`. The static build and short-link pages go to `build/jaspr/`. Refresh is optional for local builds.
+The dev server is available at `http://localhost:8080`. The static build, short-link pages, and `404.html` go to `build/jaspr/`. For a subpath deployment, use the same `SITE_BASE` for the build and `tool/not_found.dart`. Refresh is optional for local builds.
 
 ## Themes
 
