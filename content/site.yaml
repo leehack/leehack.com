@@ -17,7 +17,7 @@ profile:
   # One line under the name. {downloads} is the live monthly pub.dev total.
   facts:
     - {value: "{downloads}", label: pub.dev downloads a month}
-    - {value: "30", label: talks and workshops since 2023}
+    - {value: "30+", label: talks and workshops since 2023}
     - {value: "3", label: FlutterCon talks}
     - {value: "2", label: books translated into Korean}
 
@@ -115,7 +115,7 @@ answers:
     extras_label: Books I helped translate into Korean
     extras:
       - label: Efficient Go (lead translator, 2023)
-        url: "https://fliphtml5.com/hkuy/cfbj/Go_%E1%84%89%E1%85%A5%E1%86%BC%E1%84%82%E1%85%B3%E1%86%BC_%E1%84%8E%E1%85%AC%E1%84%8C%E1%85%A5%E1%86%A8%E1%84%92%E1%85%AA_%E1%84%80%E1%85%A1%E1%84%8B%E1%85%B5%E1%84%83%E1%85%B3/"
+        url: "https://www.hanbit.co.kr/books/go-%EC%84%B1%EB%8A%A5-%EC%B5%9C%EC%A0%81%ED%99%94-%EA%B0%80%EC%9D%B4%EB%93%9C?code=B5943936026"
       - label: Flutter Engineering (co-translator, 2025)
         url: "https://www.hanbit.co.kr/books/%ED%94%8C%EB%9F%AC%ED%84%B0-%EC%97%94%EC%A7%80%EB%8B%88%EC%96%B4%EB%A7%81?code=E4329421943"
 
