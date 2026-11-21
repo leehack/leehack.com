@@ -17,7 +17,7 @@ typedef Seo = ({String title, String description});
 typedef SiteLink = ({String label, String handle, String url});
 typedef ExtraLink = ({String label, String url});
 typedef PackageEntry = ({String name, String blurb, String url, int downloads});
-typedef ListEntry = ({String tag, String title, String? note, String url, bool highlight});
+typedef ListEntry = ({String tag, String title, String? note, String? summary, String url, bool highlight});
 typedef Fact = ({String value, String label});
 typedef Post = ({String title, String url, DateTime date});
 
@@ -101,6 +101,7 @@ class SiteData {
               tag: item['tag'] as String,
               title: item['title'] as String,
               note: item['note'] as String?,
+              summary: item['summary'] as String?,
               url: item['url'] as String,
               highlight: item['highlight'] as bool? ?? false,
             ),

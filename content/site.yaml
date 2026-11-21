@@ -13,7 +13,7 @@ profile:
   question: who is Jhin?
   # Text between *asterisks* is shown in the accent colour.
   intro: I build open-source tools for using AI from Dart and Flutter. Most of it runs *on the device*, with no cloud involved.
-  footer_note: These answers are pre-written. No model is running here.
+  footer_note: The profile answers are written by me.
   # One line under the name. {downloads} is the live monthly pub.dev total.
   facts:
     - {value: "{downloads}", label: pub.dev downloads a month}
@@ -83,10 +83,12 @@ answers:
         highlight: true
         title: "Flight Mode AI: Building Local LLM Apps Easily with LlamaDart"
         note: FlutterCon USA, Orlando · video
+        summary: Run language models in a Flutter app without an internet connection.
         url: "https://www.youtube.com/watch?v=aIsxrKkxSFM"
       - tag: "2026"
         title: "Flight Mode AI: Shipping Reliable Offline AI with Flutter and Dart"
         note: DevFest Montréal · slides
+        summary: Build reliable Flutter apps that keep working offline with on-device AI.
         url: "https://docs.google.com/presentation/d/1wWL6AQOEHZYcNkxcivRN4tCqsx3CoVwbSmnuXKKi-Og/edit?usp=sharing"
       - tag: "2026"
         title: "Unlocking On-Device AI with llamadart"

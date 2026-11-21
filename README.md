@@ -47,3 +47,27 @@ The Pages workflow runs on pushes to `main`, daily at 09:17 UTC, and on manual d
 4. After DNS resolves, enable **Enforce HTTPS** in Pages and check the homepage and a short link at `https://leehack.com`.
 
 Llama artwork by [Noto Emoji](https://github.com/googlefonts/noto-emoji), licensed under Apache 2.0. Dash is Flutter's mascot; the image comes from the [Flutter brand page](https://flutter.dev/brand).
+
+## Resource finder
+
+The homepage finder uses the same catalog as the profile answers. Links are visible
+without JavaScript. Keyword search filters them in the browser. Add an optional
+`summary` to a talk or community entry to give the finder more context.
+
+To try the optional local semantic search:
+
+```sh
+bash prototypes/flight-mode/build.sh
+python3 prototypes/flight-mode/serve.py
+```
+
+Use the search field below the intro on the [local homepage](http://127.0.0.1:8094/).
+After the page finishes loading, the browser downloads and initializes the
+37 MB BGE-small English model and embeds the resource catalog in the
+background. When a browser reports Data Saver, it waits for the first search.
+Once local search is ready, pressing Enter or choosing **Search** only needs
+to embed the question and rank the links. The browser reuses the weights from
+Cache Storage across visits until it clears them.
+
+The preview serves the version-matched llamadart bridge and cross-origin
+isolation headers. The GitHub Pages build includes keyword search.

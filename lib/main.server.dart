@@ -57,6 +57,8 @@ void main() {
           ),
         siteThemeStyles(),
         const link(href: 'site.css', rel: 'stylesheet'),
+        const link(href: 'finder.css', rel: 'stylesheet'),
+        const script(src: 'finder.js', defer: true),
         if (site.measurementId.isNotEmpty) ...[
           script(content: _analyticsSnippet(site.measurementId)),
           script(

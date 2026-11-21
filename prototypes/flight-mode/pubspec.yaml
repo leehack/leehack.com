@@ -1,0 +1,8 @@
+name: flight_mode_preview
+publish_to: none
+environment:
+  sdk: ^3.14.0
+dependencies:
+  llamadart: 0.20.1
+dev_dependencies:
+  lints: ^5.0.0

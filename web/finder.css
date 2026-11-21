@@ -1,0 +1,52 @@
+#finder-form { margin-top: 18px; }
+#finder-form label { display: block; margin-bottom: 8px; }
+
+.finder-search-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+#finder-query {
+  display: block;
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--tx) 5%, var(--bg));
+  color: var(--tx);
+  font: inherit;
+}
+
+#finder-query::placeholder { color: var(--so); }
+#finder-submit {
+  border: 1px solid var(--ac);
+  background: var(--ac);
+  color: var(--bg);
+  padding: 0 14px;
+  font: 600 13px var(--mono);
+  cursor: pointer;
+}
+
+#finder-submit:disabled { opacity: .65; cursor: wait; }
+.finder-description {
+  margin: 8px 0 0;
+  color: var(--so);
+  font-size: 16px;
+  line-height: 1.35;
+}
+
+.finder-description a {
+  color: var(--ac);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+#finder-model-status { margin: 4px 0 0; }
+#finder-status { margin: 12px 0 4px; }
+#finder-results { list-style: none; margin: 0; padding: 0; }
+#finder-results .list-row { grid-template-columns: 12ch 1fr; }
+#finder-results .list-row:hover { color: var(--ac); }
+
+@media (max-width: 480px) {
+  #finder-results .list-row { grid-template-columns: 1fr; gap: 2px; }
+}

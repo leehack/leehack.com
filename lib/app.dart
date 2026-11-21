@@ -2,6 +2,7 @@ import 'package:jaspr/dom.dart';
 import 'package:jaspr/jaspr.dart';
 
 import 'client/site_interactions.dart';
+import 'finder.dart';
 import 'format.dart';
 import 'site_data.dart';
 import 'site_themes.dart';
@@ -65,6 +66,7 @@ class App extends StatelessComponent {
             ]),
             p(id: 'intro', classes: 'intro', _intro(profile.intro)),
             if (site.answers.isNotEmpty) ...[
+              Finder(site),
               div(id: 'questions', classes: 'answer-chips', [
                 const span(attributes: {'aria-hidden': 'true'}, [Component.text('>')]),
                 for (final answer in site.answers) ...[

@@ -39,7 +39,7 @@ answers:
     lead: Where I speak
     type: list
     items:
-      - {tag: '2026', title: Flutter in Montréal, url: 'https://example.com/talk', highlight: true}
+      - {tag: '2026', title: Flutter in Montréal, summary: A talk on Flutter, url: 'https://example.com/talk', highlight: true}
   - id: write
     chip: Posts
     lead: What I write
@@ -92,6 +92,7 @@ void main() {
       tag: '2026',
       title: 'Flutter in Montréal',
       note: null,
+      summary: 'A talk on Flutter',
       url: 'https://example.com/talk',
       highlight: true,
     ));
