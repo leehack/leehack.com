@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-root=$(cd "$(dirname "$0")/../.." && pwd)
-prototype="$root/prototypes/flight-mode"
+package_dir=$(cd "$(dirname "$0")" && pwd)
 if (( $# > 1 )); then
   echo "Usage: $0 [built-site-directory]" >&2
   exit 1
@@ -11,16 +10,16 @@ fi
 if (( $# == 1 )); then
   output=$(cd "$1" && pwd)
 else
-  output="$prototype/build"
-  cd "$root"
+  output="$package_dir/build"
+  cd "$package_dir/../.."
   SITE_BASE=/ dart run jaspr_cli:jaspr build
   mkdir -p "$output"
   cp -R build/jaspr/. "$output/"
 fi
 
-cd "$prototype"
+cd "$package_dir"
 dart pub get
-dart compile js -O2 --no-source-maps flight.dart -o "$output/semantic.dart.js"
+dart compile js -O2 --no-source-maps web/semantic_search.dart -o "$output/semantic.dart.js"
 rm -f "$output/semantic.dart.js.deps"
 dart run llamadart:web_setup --web-dir "$output"
 dart run llamadart:web_setup --web-dir "$output" --check

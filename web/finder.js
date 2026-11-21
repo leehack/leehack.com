@@ -26,9 +26,11 @@
 
   function keywordSearch() {
     const wanted = [...new Set(terms(query.value))];
-    const empty = query.value.trim() === '';
-    list.hidden = status.hidden = empty;
-    if (empty) return;
+    list.hidden = query.value.trim() === '';
+    if (list.hidden) {
+      status.textContent = '';
+      return;
+    }
 
     const matches = entries.map(entry => ({
       ...entry,
@@ -135,21 +137,23 @@
       query.focus();
       return;
     }
+    const isCurrentQuery = () => query.value.trim() === question;
     submit.disabled = true;
-    query.readOnly = true;
     if (!rankResources) status.textContent = 'Preparing local search…';
     try {
       const rank = rankResources ?? await prepareSearch();
+      if (!isCurrentQuery()) return;
       const matches = await rank(question);
+      if (!isCurrentQuery()) return;
       render(matches.map(index => rows[index]));
       status.textContent = 'Closest links · matched in your browser';
     } catch (error) {
       console.error(error);
+      if (!isCurrentQuery()) return;
       keywordSearch();
       status.textContent = 'Local matching is unavailable. Keyword results are still available.';
     } finally {
       submit.disabled = false;
-      query.readOnly = false;
     }
   }
 })();

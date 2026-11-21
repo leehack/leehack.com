@@ -15,7 +15,7 @@ include: package:lints/recommended.yaml
 
 analyzer:
   exclude:
-    - prototypes/flight-mode/**
+    - tool/semantic_search/**
 
 # Jaspr has a custom analyzer plugin 'jaspr_lints', which is enabled here.
 #

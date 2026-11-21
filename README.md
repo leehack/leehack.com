@@ -54,11 +54,13 @@ The homepage finder uses the same catalog as the profile answers. Links are visi
 without JavaScript. Keyword search filters them in the browser. Add an optional
 `summary` to a talk or community entry to give the finder more context.
 
-To try the optional local semantic search:
+The browser runtime lives in `tool/semantic_search`. Its own
+`pubspec.yaml` keeps llamadart’s native build hooks out of ordinary
+site commands. Run the site locally with semantic search enabled:
 
 ```sh
-bash prototypes/flight-mode/build.sh
-python3 prototypes/flight-mode/serve.py
+bash tool/semantic_search/build.sh
+python3 tool/semantic_search/serve.py
 ```
 
 Use the search field below the intro on the [local homepage](http://127.0.0.1:8094/).

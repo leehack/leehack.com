@@ -37,7 +37,7 @@ class Finder extends StatelessComponent {
         ),
       ],
     ),
-    const p(id: 'finder-status', classes: 'meta', attributes: {'role': 'status', 'hidden': ''}, []),
+    const p(id: 'finder-status', classes: 'meta', attributes: {'role': 'status'}, []),
     ul(
       id: 'finder-results',
       attributes: const {'hidden': ''},

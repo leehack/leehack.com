@@ -42,7 +42,8 @@
 }
 
 #finder-model-status { margin: 4px 0 0; }
-#finder-status { margin: 12px 0 4px; }
+#finder-status { margin: 0; }
+#finder-status:not(:empty) { margin: 12px 0 4px; }
 #finder-results { list-style: none; margin: 0; padding: 0; }
 #finder-results .list-row { grid-template-columns: 12ch 1fr; }
 #finder-results .list-row:hover { color: var(--ac); }

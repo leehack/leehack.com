@@ -40,7 +40,7 @@ jobs:
           dart run tool/not_found.dart
       - run: dart run tool/shortlinks.dart
       - name: Stage semantic search
-        run: bash prototypes/flight-mode/build.sh build/jaspr
+        run: bash tool/semantic_search/build.sh build/jaspr
       - name: Drop build tooling the page never loads
         run: rm -rf build/jaspr/packages
       - uses: actions/upload-pages-artifact@v5

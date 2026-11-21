@@ -1,4 +1,4 @@
-name: flight_mode_preview
+name: leehack_semantic_search
 publish_to: none
 environment:
   sdk: ^3.14.0
