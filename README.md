@@ -70,4 +70,8 @@ to embed the question and rank the links. The browser reuses the weights from
 Cache Storage across visits until it clears them.
 
 The preview serves the version-matched llamadart bridge and cross-origin
-isolation headers. The GitHub Pages build includes keyword search.
+isolation headers. The Pages workflow packages the same model and bridge.
+At the public edge, the homepage and bridge worker responses must include
+`Cross-Origin-Opener-Policy: same-origin` and
+`Cross-Origin-Embedder-Policy: require-corp`. The finder uses keyword search
+when the page is not cross-origin isolated.
